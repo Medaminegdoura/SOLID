@@ -1,36 +1,20 @@
 package com.directi.training.dip.exercise;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.Base64;
 
-public class NetworkAndDatabaseEncoder extends EncodingModule {
-    private MyDatabase database;
-    private String urlString;
+public class NetworkAndDatabaseEncoder extends EncodingModule{
+    private DataSource source;
+    private DataDestination destination;
 
-    NetworkAndDatabaseEncoder(MyDatabase db, String urlString) {
-        database = db != null ? db : new MyDatabase();
-        this.urlString = urlString;
+    public NetworkAndDatabaseEncoder(DataSource source, DataDestination destination) {
+        this.source = source;
+        this.destination = destination;
     }
 
     public void encode() throws IOException {
-        URL url;
-        url = new URL(urlString);
-        InputStream in;
-        in = url.openStream();
-        InputStreamReader reader = new InputStreamReader(in);
-        StringBuilder inputString1 = new StringBuilder();
-        int c;
-        c = reader.read();
-        while (c != -1) {
-            inputString1.append((char) c);
-            c = reader.read();
-        }
-        String inputString = inputString1.toString();
-        String encodedString = Base64.getEncoder().encodeToString(inputString.getBytes());
-        System.out.println(encodedString);
-        database.write(encodedString);
+        String data = source.read();
+        String encodedData = Base64.getEncoder().encodeToString(data.getBytes());
+        destination.write(encodedData);
     }
 }
